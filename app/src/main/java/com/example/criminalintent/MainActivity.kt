@@ -4,20 +4,26 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.criminalintent.databinding.ActivityMainBinding
+import com.example.criminalintent.db.IntentDataBase
+import com.example.criminalintent.db.repository.IntentRealization
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private val adapter = IntentListAdapter()
+
     private val imgIdList = listOf(R.drawable.black_box, R.drawable.black_box)
     private var index = 0
+
     private var fragment =  IntentFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        APP = this
         init()
     }
 
@@ -34,23 +40,29 @@ class MainActivity : AppCompatActivity() {
         } else if (item.itemId == R.id.add) {
             supportFragmentManager.beginTransaction().replace(R.id.intentForm, fragment).commit()
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            if (index < imgIdList.size - 1) {
-                var intent = IntentModel("Kill human", "10 Jan 2022", imgIdList[index])
-                adapter.addIntent(intent)
-                index++
-            } else {
-                index = 0
-            }
         }
 
         return true
     }
 
+    private fun initDataBase() {
+        val daoIntent = IntentDataBase.getInstance(this).getIntentDao()
+        REPOSITORY = IntentRealization(daoIntent)
+    }
+
+    fun getAllIntents(): LiveData<List<IntentModel>> {
+        return REPOSITORY.allIntents
+    }
+
     private fun init() {
+        initDataBase()
         binding.apply {
             rcView.layoutManager = GridLayoutManager(this@MainActivity, 1)
             rcView.adapter = adapter
-                // выводить все что сохранено в бд при инициализации
+            getAllIntents().observe(this@MainActivity) { listIntents ->
+                listIntents.asReversed()
+                adapter.setList(listIntents)
+            }
         }
     }
 }

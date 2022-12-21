@@ -8,20 +8,22 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.criminalintent.data.Model.Photo
 import com.example.criminalintent.databinding.ListItemModelBinding
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class IntentListAdapter: RecyclerView.Adapter<IntentListAdapter.IntentHolder>() {
-    var listPhotos = emptyList<Photo>()
+    var listPhotos = emptyList<IntentModel>()
 
     class IntentHolder(item: View):RecyclerView.ViewHolder(item)  {
         val binding = ListItemModelBinding.bind(item)
-        fun bind(photo: Photo) = with(binding) {
+        fun bind(photo: IntentModel) = with(binding) {
             itemView.setOnClickListener {
-                addIntent(IntentModel(url_s = photo.url_s)){}
+                addIntent(IntentModel(
+                    url_s = photo.url_s, farm = photo.farm, height_s = photo.height_s,
+                    isfamily = photo.isfamily, isfriend = photo.isfriend, ispublic = photo.ispublic,
+                    owner = photo.owner, secret = photo.secret, server = photo.server, width_s = photo.width_s, title = photo.title)){}
                 Toast.makeText(APP, "Image saved", Toast.LENGTH_SHORT).show()
             }
             Glide.with(im.rootView.context).asBitmap().load(photo.url_s).override( 150, 150 ).thumbnail( 0.5f ).diskCacheStrategy(
@@ -54,7 +56,7 @@ class IntentListAdapter: RecyclerView.Adapter<IntentListAdapter.IntentHolder>() 
         return listPhotos.size
     }
 
-    fun setList(intentsList: List<Photo>) {
+    fun setList(intentsList: List<IntentModel>) {
         listPhotos = intentsList
         notifyDataSetChanged()
     }

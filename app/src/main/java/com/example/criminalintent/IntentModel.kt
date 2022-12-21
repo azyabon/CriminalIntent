@@ -10,5 +10,5 @@ data class IntentModel(
     val id: Int = 0,
 
     @ColumnInfo
-    val imageId: ByteArray,
+    val url_s: String,
 )

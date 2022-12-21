@@ -1,30 +1,42 @@
 package com.example.criminalintent
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.criminalintent.data.Model.Photo
 import com.example.criminalintent.databinding.ListItemModelBinding
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class IntentListAdapter: RecyclerView.Adapter<IntentListAdapter.IntentHolder>() {
-    var intentList = emptyList<IntentModel>()
-    val listPhotos = emptyList<Photo>()
+    var listPhotos = emptyList<Photo>()
 
-    class IntentHolder(item: View):RecyclerView.ViewHolder(item) {
+    class IntentHolder(item: View):RecyclerView.ViewHolder(item)  {
         val binding = ListItemModelBinding.bind(item)
-        fun bind(intent: IntentModel) = with(binding) {
-
-            fun toBitmap(byteArray: ByteArray): Bitmap {
-                return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        fun bind(photo: Photo) = with(binding) {
+            itemView.setOnClickListener {
+                addIntent(IntentModel(url_s = photo.url_s)){}
+                Toast.makeText(APP, "Image saved", Toast.LENGTH_SHORT).show()
             }
+            Glide.with(im.rootView.context).asBitmap().load(photo.url_s).override( 150, 150 ).thumbnail( 0.5f ).diskCacheStrategy(
+                DiskCacheStrategy.NONE).dontTransform().centerCrop().placeholder(R.drawable.sample_bitmap).error(R.drawable.black_box).into(im)
+        }
 
-            im.setImageBitmap(toBitmap(intent.imageId))
-            im.getLayoutParams().height = 120;
-            im.getLayoutParams().width = 120;
 
+        @SuppressLint("SetTextI18n")
+        @OptIn(DelicateCoroutinesApi::class)
+        private fun addIntent(intent: IntentModel, onSuccess:() -> Unit ) {
+            GlobalScope.launch {
+                REPOSITORY.insertIntent(intent) {
+                    onSuccess()
+                }
+            }
         }
     }
 
@@ -34,15 +46,16 @@ class IntentListAdapter: RecyclerView.Adapter<IntentListAdapter.IntentHolder>() 
     }
 
     override fun onBindViewHolder(holder: IntentHolder, position: Int) {
-        holder.bind(intentList[position])
+        holder.bind(listPhotos[position])
     }
+
 
     override fun getItemCount(): Int {
-        return intentList.size
+        return listPhotos.size
     }
 
-    fun setList(intentsList: List<IntentModel>) {
-        intentList = intentsList
+    fun setList(intentsList: List<Photo>) {
+        listPhotos = intentsList
         notifyDataSetChanged()
     }
 

@@ -10,6 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        jcenter()
+        maven {
+            url = uri("https://live.staticflickr.com")
+        }
     }
 }
 rootProject.name = "CriminalIntent"

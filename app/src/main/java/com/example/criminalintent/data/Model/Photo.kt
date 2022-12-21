@@ -1,8 +1,12 @@
 package com.example.criminalintent.data.Model
 
+import androidx.room.Entity
+
+@Entity(tableName = "photo_table")
 data class Photo(
     val farm: Int,
     val height_s: Int,
+
     val id: String,
     val isfamily: Int,
     val isfriend: Int,

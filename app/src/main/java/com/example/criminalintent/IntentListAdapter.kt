@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.criminalintent.data.Model.Photo
 import com.example.criminalintent.databinding.ListItemModelBinding
 
 class IntentListAdapter: RecyclerView.Adapter<IntentListAdapter.IntentHolder>() {
     var intentList = emptyList<IntentModel>()
+    val listPhotos = emptyList<Photo>()
 
     class IntentHolder(item: View):RecyclerView.ViewHolder(item) {
         val binding = ListItemModelBinding.bind(item)
@@ -20,6 +22,9 @@ class IntentListAdapter: RecyclerView.Adapter<IntentListAdapter.IntentHolder>() 
             }
 
             im.setImageBitmap(toBitmap(intent.imageId))
+            im.getLayoutParams().height = 120;
+            im.getLayoutParams().width = 120;
+
         }
     }
 

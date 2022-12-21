@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.criminalintent.IntentModel
 import com.example.criminalintent.db.dao.IntentDao
 
-@Database(entities = [IntentModel::class], version = 1)
+@Database(entities = [IntentModel::class], version = 3)
 abstract class IntentDataBase: RoomDatabase() {
     abstract fun getIntentDao(): IntentDao
 

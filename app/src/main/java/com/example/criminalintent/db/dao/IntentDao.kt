@@ -13,6 +13,6 @@ interface IntentDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(intentModel: IntentModel)
 
-    @Query("SELECT * from intent_table")
+    @Query("SELECT * from photo_table")
     fun getAllIntents(): LiveData<List<IntentModel>>
 }

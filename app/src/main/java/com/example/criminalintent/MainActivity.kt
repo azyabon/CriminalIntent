@@ -14,9 +14,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private val adapter = IntentListAdapter()
 
-    private val imgIdList = listOf(R.drawable.black_box, R.drawable.black_box)
-    private var index = 0
-
     private var fragment =  IntentFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -14,18 +14,6 @@ class IntentListAdapter: RecyclerView.Adapter<IntentListAdapter.IntentHolder>() 
     class IntentHolder(item: View):RecyclerView.ViewHolder(item) {
         val binding = ListItemModelBinding.bind(item)
         fun bind(intent: IntentModel) = with(binding) {
-            tvTitle.text = intent.title
-            tvDate.text = intent.date
-
-            fun isVisible(solved: Boolean): Int {
-                if (solved) {
-                    return View.VISIBLE
-                } else {
-                    return View.INVISIBLE
-                }
-            }
-
-            solved.visibility = isVisible(intent.isSolved)
 
             fun toBitmap(byteArray: ByteArray): Bitmap {
                 return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)

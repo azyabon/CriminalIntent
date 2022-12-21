@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         initDataBase()
         binding.apply {
-            rcView.layoutManager = GridLayoutManager(this@MainActivity, 1)
+            rcView.layoutManager = GridLayoutManager(this@MainActivity, 3)
             rcView.adapter = adapter
             getAllIntents().observe(this@MainActivity) { listIntents ->
                 listIntents.asReversed()

@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.criminalintent.IntentModel
-import com.example.criminalintent.data.Model.Photo
 
 @Dao
 interface IntentDao {

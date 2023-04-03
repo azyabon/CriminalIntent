@@ -1,31 +1,25 @@
 package com.example.criminalintent
 
-import android.app.*
-import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.work.*
 import com.example.criminalintent.data.Model.Photos
 import com.example.criminalintent.data.repository.Repository
 import com.example.criminalintent.databinding.ActivityMainBinding
 import com.example.criminalintent.db.IntentDataBase
 import com.example.criminalintent.db.repository.IntentRealization
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.android.synthetic.main.list_item_model.*
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.time.LocalTime
-import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     var photoList: MutableLiveData<Response<Photos>> = MutableLiveData()
     private val adapter = IntentListAdapter()
 
-    private var fragment =  IntentFragment.newInstance()
+    private var fragment = IntentFragment.newInstance()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +38,7 @@ class MainActivity : AppCompatActivity() {
         APP = this
         init()
         initDataBase()
-
-        createNotificationChannel();
+        workNotification()
 
         val search = findViewById<TextInputEditText>(R.id.search)
 
@@ -58,34 +51,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel() {
-        val name = "Notif Channel";
-        val desc = "A Description of the channel";
-        val importance = NotificationManager.IMPORTANCE_DEFAULT;
-        val channel = NotificationChannel(channelID, name, importance);
-        channel.description = desc;
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+    fun workNotification() {
+        val myWorkRequest: WorkRequest = PeriodicWorkRequestBuilder<MyWorker>(360, TimeUnit.MINUTES)
+            .addTag("my_id")
+            .build()
 
-        val intent = Intent(applicationContext, Notification::class.java)
-        val calendar = Calendar.getInstance();
-        intent.putExtra(titleExtra, "You are logged into the photo gallery app")
-        intent.putExtra(messageExtra, "Enjoy watching!")
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            applicationContext,
-            notificationID,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time = calendar.timeInMillis
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            time,
-            pendingIntent
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork("my_id", ExistingPeriodicWorkPolicy.KEEP,
+            myWorkRequest as PeriodicWorkRequest
         )
     }
 
